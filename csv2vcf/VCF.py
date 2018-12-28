@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 from tkinter import messagebox
+import argparse
 
 name_dict={}
 unknown_index=0
@@ -110,7 +111,6 @@ def VCF_website(file,website_url):
     '''
     file.write('item3.URL;type=pref:' + website_url + "\n")
     file.write("END:VCARD")
-    file.close()
 
 def VCF_Folder(filename):
     '''
@@ -121,12 +121,12 @@ def VCF_Folder(filename):
     '''
     folder_adr=os.path.dirname(filename)
     filename_split=os.path.basename(filename).split(".")[0]
-    VCF_folder_adr = os.path.join(folder_adr, "VCF_CONVERT_" + filename_split)
+    VCF_folder_adr = os.path.join(folder_adr, filename_split)
     if "VCF_CONVERT_"+filename_split not in os.listdir(folder_adr):
         os.mkdir(VCF_folder_adr)
     return VCF_folder_adr
 
-def VCF_creator(folder_name,first_name,last_name,tel_mobile,tel_home,tel_work,email_home,email_work,email_mobile,adr_work,adr_home,website_url):
+def VCF_creator(file,first_name,last_name,tel_mobile,tel_home,tel_work,email_home,email_work,email_mobile,adr_work,adr_home,website_url):
     '''
     This function create VCF files
     :param folder_name: Folder name
@@ -143,7 +143,6 @@ def VCF_creator(folder_name,first_name,last_name,tel_mobile,tel_home,tel_work,em
     :param website_url: URL
     :return: None
     '''
-    file=open(os.path.join(folder_name,last_name+"_"+first_name+".vcf"),"w")
     VCF_init(file)
     VCF_name(file,first_name,last_name)
     VCF_phone(file,tel_mobile,tel_home,tel_work)
@@ -164,7 +163,7 @@ def name_dict_update(name):
     else:
         name_dict[name] = name_dict[name] + 1
 
-def VCF_write(temp,name_dict,foldername):
+def VCF_write(file, temp,name_dict,foldername):
     '''
     This function write VCF files in loop (call VCF_creator)
     :param temp: list of each row information
@@ -180,14 +179,14 @@ def VCF_write(temp,name_dict,foldername):
     global unknown_index
     if len(temp[0]) == 0 and len(temp[1]) == 0:
         unknown_index += 1
-        VCF_creator(foldername, str(unknown_index),"Unknown ", temp[2], temp[3], temp[4], temp[5], temp[6], temp[7],
+        VCF_creator(file, str(unknown_index),"Unknown ", temp[2], temp[3], temp[4], temp[5], temp[6], temp[7],
                     temp[8], temp[9], temp[10])
     else:
         if name_dict[name] != 0:
-            VCF_creator(foldername, temp[0] + "_" + str(name_dict[name]), temp[1], temp[2], temp[3], temp[4], temp[5],
+            VCF_creator(file, temp[0] + "_" + str(name_dict[name]), temp[1], temp[2], temp[3], temp[4], temp[5],
                         temp[6], temp[7], temp[8], temp[9], temp[10])
         else:
-            VCF_creator(foldername, temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], temp[7], temp[8],
+            VCF_creator(file, temp[0], temp[1], temp[2], temp[3], temp[4], temp[5], temp[6], temp[7], temp[8],
                         temp[9], temp[10])
 def csv_reader(file_name,GUI=False):
     '''
@@ -200,7 +199,8 @@ def csv_reader(file_name,GUI=False):
         file_name=os.path.join(os.getcwd(),file_name)
         file=open(file_name,"r")
         vcf_counter=0
-        foldername=VCF_Folder(file_name)
+        new_file_name=VCF_Folder(file_name)
+        vcf_file=open(os.path.join(new_file_name+".vcf"),"w")
         for index,line in enumerate(file):
             if index>0:
                 stripped_line=line.strip()
@@ -209,8 +209,9 @@ def csv_reader(file_name,GUI=False):
                     print("[Warning] CSV File Line "+str(index)+" Bad Format")
                     continue
                 else:
-                    VCF_write(temp,name_dict,foldername)
+                    VCF_write(vcf_file, temp,name_dict,new_file_name)
                     vcf_counter+=1
+        vcf_file.close()
         return vcf_counter
 
     except FileNotFoundError:
@@ -220,4 +221,3 @@ def csv_reader(file_name,GUI=False):
             messagebox.showinfo("CSV2VCF", "Error In Reading Input File")
         print(str(e))
         print("[Error] In Reading Input File")
-
