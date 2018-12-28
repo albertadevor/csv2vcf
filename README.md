@@ -91,7 +91,9 @@
 CSV file with first row:
 
 Frst row: (exact wording doesn't matter but all 11 columns must be included)
+
 ```First-Name,Last-Name,Mobile,Home,Work,Email-Home,Email-Work,Email-Mobile,Address-Work,Address-Home,Website```
+
 Next rows should abide by this formatting with contact information. Leave blank if no information.
  												
 ## TODO		
