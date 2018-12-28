@@ -13,7 +13,7 @@ def command_line(filename):
     time_2 = time.perf_counter()
     delta_time = time_2 - time_1
     if counter != None:
-        print(str(counter) + " VCF File Generated In " + time_convert(delta_time))
+        print(str(counter) + " VCF Contacts Generated In " + time_convert(delta_time))
 
 if __name__=="__main__":
     def open_folder(address):
@@ -42,7 +42,7 @@ if __name__=="__main__":
         time_2 = time.perf_counter()
         delta_time = time_2 - time_1
         if counter!=None:
-            print(str(counter) + " VCF File Generated In " + time_convert(delta_time))
+            print(str(counter) + " VCF Contacts Generated In " + time_convert(delta_time))
             messagebox.showinfo("CSV2VCF",str(counter) + " VCF File Generated In " + time_convert(delta_time))
             open_folder(folder)
         return filename
